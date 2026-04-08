@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-do list</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="tasks-pending">
+        <h2>Pendiente</h2>
+
+        <p class="tasks-pending__field">
+          <label for="">Title</label>
+          <input
+            class="tasks-pending__input"
+            type="text"
+            name="title"
+            id="task-title"
+          />
+        </p>
+        <p class="tasks-pending__field">
+          <label for="">Description (optional)</label>
+          <textarea
+            class="tasks-pending__input"
+            rows="1"
+            name="description"
+            id="task-description"
+          ></textarea>
+        </p>
+        <button class="btn" id="add-task">Añadir tarea</button>
+
+        <h3>Tareas</h3>
+        <ul class="column" id="tasks-pending__tasks"></ul>
+      </section>
+
+      <section class="tasks-process">
+        <h2>En proceso</h2>
+        <h3>Tareas</h3>
+        <ul class="column" id="tasks-process__tasks"></ul>
+      </section>
+
+      <section class="tasks-finished">
+        <h2>Terminada</h2>
+        <h3>Tareas</h3>
+        <ul class="column" id="tasks-finished__tasks">
+          <li class="tasks-pending__task">
+            <div>
+              <h4 class="no-margin">Título</h4>
+              <p>Demasiada tarea</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="index.js"></script>
+  </body>
+</html>
