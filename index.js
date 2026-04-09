@@ -8,7 +8,9 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let process = JSON.parse(localStorage.getItem("process")) || [];
 let finished = JSON.parse(localStorage.getItem("finished")) || [];
 
+////////////////////////////////////////////////////////////////
 // Functions
+// Add task to their respective column
 const addTaskToProcessColumn = (e, identifier, key, fn) => {
   const id = e.getAttribute("data-index");
 
@@ -54,6 +56,7 @@ const addTaskToPendingColumn = (e, identifier, key, fn) => {
   fn();
 };
 
+// Eliminate task
 const eliminateTask = (e, identifier, key, fn) => {
   const id = e.getAttribute("data-index");
 
@@ -92,6 +95,31 @@ const htmlContent = (container, identifier, classes, texts) => {
   });
 };
 
+// Events from differents buttons
+const btnEventsPending = (btns, fn) => {
+  btns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      fn(e.target, tasks, "tasks", generateHtml);
+    });
+  });
+};
+
+const btnEventsProcess = (btns, fn) => {
+  btns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      fn(e.target, process, "process", generateHtmlProcess);
+    });
+  });
+};
+
+const btnEventsFinished = (btns, fn) => {
+  btns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      fn(e.target, finished, "finished", generateHtmlFinished);
+    });
+  });
+};
+
 // Generate html on pending column
 const generateHtml = () => {
   htmlContent(
@@ -105,25 +133,10 @@ const generateHtml = () => {
   const btnsFinished = document.querySelectorAll(".btn-finished");
   const btnsElimintate = document.querySelectorAll(".btn-eliminate-pending");
 
-  btnsProcess.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToProcessColumn(e.target, tasks, "tasks", generateHtml);
-    });
-  });
-
-  btnsFinished.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToFinishedColumn(e.target, tasks, "tasks", generateHtml);
-    });
-  });
-
-  btnsElimintate.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      eliminateTask(e.target, tasks, "tasks", generateHtml);
-    });
-  });
+  btnEventsPending(btnsProcess, addTaskToProcessColumn);
+  btnEventsPending(btnsFinished, addTaskToFinishedColumn);
+  btnEventsPending(btnsElimintate, eliminateTask);
 };
-generateHtml();
 
 // Generate html on process column
 const generateHtmlProcess = () => {
@@ -138,30 +151,10 @@ const generateHtmlProcess = () => {
   const btnsFinished = document.querySelectorAll(".btn-finished-process");
   const btnsElimintate = document.querySelectorAll(".btn-eliminate-process");
 
-  btnsPending.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToPendingColumn(e.target, process, "process", generateHtmlProcess);
-    });
-  });
-
-  btnsFinished.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToFinishedColumn(
-        e.target,
-        process,
-        "process",
-        generateHtmlProcess,
-      );
-    });
-  });
-
-  btnsElimintate.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      eliminateTask(e.target, process, "process", generateHtmlProcess);
-    });
-  });
+  btnEventsProcess(btnsPending, addTaskToPendingColumn);
+  btnEventsProcess(btnsFinished, addTaskToFinishedColumn);
+  btnEventsProcess(btnsElimintate, eliminateTask);
 };
-generateHtmlProcess();
 
 // Generate html on finished column
 const generateHtmlFinished = () => {
@@ -176,40 +169,24 @@ const generateHtmlFinished = () => {
   const btnsProcess = document.querySelectorAll(".btn-process-finished");
   const btnsElimintate = document.querySelectorAll(".btn-eliminate-finished");
 
-  btnsPending.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToPendingColumn(
-        e.target,
-        finished,
-        "finished",
-        generateHtmlFinished,
-      );
-    });
-  });
-
-  btnsProcess.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      addTaskToProcessColumn(
-        e.target,
-        finished,
-        "finished",
-        generateHtmlFinished,
-      );
-    });
-  });
-
-  btnsElimintate.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      eliminateTask(e.target, finished, "finished", generateHtmlFinished);
-    });
-  });
+  btnEventsFinished(btnsPending, addTaskToPendingColumn);
+  btnEventsFinished(btnsProcess, addTaskToProcessColumn);
+  btnEventsFinished(btnsElimintate, eliminateTask);
 };
+
+////////////////////////////////////////////////////////////////
+// Call functions
+generateHtml();
+generateHtmlProcess();
 generateHtmlFinished();
 
+////////////////////////////////////////////////////////////////
 addTask.addEventListener("click", () => {
   // Get inputs values
   let taskTitle = document.getElementById("task-title").value;
   let taskDescription = document.getElementById("task-description").value;
+
+  if (!taskTitle) return;
 
   // Add task to tasks array
   tasks.push({ title: taskTitle, description: taskDescription });
