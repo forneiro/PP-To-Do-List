@@ -57,6 +57,51 @@ const addToPendingTasks = (e) => {
   generateHtml();
   generateHtmlProcess();
 };
+const addToFinishedTasks = (e) => {
+  console.log(e);
+  const id = e.target.getAttribute("data-index");
+
+  finished.push(process[id]);
+  process.splice(id, 1);
+
+  // Save task on localStorage
+  localStorage.setItem("process", JSON.stringify(process));
+  localStorage.setItem("finished", JSON.stringify(finished));
+
+  // Re-generate html
+  generateHtmlProcess();
+  generateHtmlFinished();
+};
+
+// Buttons from finished column
+const addToPendingColumn = (e) => {
+  const id = e.target.getAttribute("data-index");
+  tasks.push(finished[id]);
+  finished.splice(id, 1);
+
+  // Save task on localStorage
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("finished", JSON.stringify(finished));
+
+  // Re-generate html
+  generateHtml();
+  generateHtmlFinished();
+};
+
+const addToProcessColumn = (e) => {
+  const id = e.target.getAttribute("data-index");
+  process.push(finished[id]);
+  finished.splice(id, 1);
+
+  // Save task on localSotrage
+  // Save task on localStorage
+  localStorage.setItem("process", JSON.stringify(process));
+  localStorage.setItem("finished", JSON.stringify(finished));
+
+  // Re-generate html
+  generateHtmlProcess();
+  generateHtmlFinished();
+};
 
 // Generate html on pending column
 const generateHtml = () => {
@@ -118,7 +163,7 @@ const generateHtmlProcess = () => {
             </div>
             <div>
                 <button class="btn btn-pending" data-index="${index}">Pendiente</button>
-                <button class="btn btn-finished data-index="${index}"">Terminada</button>
+                <button class="btn btn-finished-process" data-index="${index}">Terminada</button>
             </div>
         </li>
         `;
@@ -127,10 +172,14 @@ const generateHtmlProcess = () => {
   });
 
   const btnsPending = document.querySelectorAll(".btn-pending");
-  const btnsFinished = document.querySelectorAll(".btn-finished");
+  const btnsFinished = document.querySelectorAll(".btn-finished-process");
 
   btnsPending.forEach((btn) => {
     btn.addEventListener("click", addToPendingTasks.bind(this));
+  });
+
+  btnsFinished.forEach((btn) => {
+    btn.addEventListener("click", addToFinishedTasks.bind(this));
   });
 };
 
@@ -140,7 +189,7 @@ generateHtmlProcess();
 const generateHtmlFinished = () => {
   tasksFinishedContainer.innerHTML = "";
 
-  finished.forEach((task) => {
+  finished.forEach((task, index) => {
     newHtml = `
         <li draggable="true" class="tasks-pending__task">
             <div class="task-pending__content">
@@ -154,8 +203,8 @@ const generateHtmlFinished = () => {
                 </p>
             </div>
             <div>
-                <button class="btn btn-pending">Pendiente</button>
-                <button class="btn btn-process">En proceso</button>
+                <button class="btn btn-pending-finished" data-index="${index}">Pendiente</button>
+                <button class="btn btn-process-finished" data-index="${index}">En proceso</button>
             </div>
         </li>
         `;
@@ -163,8 +212,15 @@ const generateHtmlFinished = () => {
     tasksFinishedContainer.insertAdjacentHTML("beforeend", newHtml);
   });
 
-  const btnsProcess = document.querySelectorAll(".btn-process");
-  const btnsFinished = document.querySelectorAll(".btn-finished");
+  const btnsPending = document.querySelectorAll(".btn-pending-finished");
+  const btnsProcess = document.querySelectorAll(".btn-process-finished");
+
+  btnsPending.forEach((btn) => {
+    btn.addEventListener("click", addToPendingColumn.bind(this));
+  });
+  btnsProcess.forEach((btn) => {
+    btn.addEventListener("click", addToProcessColumn.bind(this));
+  });
 };
 generateHtmlFinished();
 
