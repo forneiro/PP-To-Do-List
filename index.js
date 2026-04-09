@@ -8,106 +8,67 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let process = JSON.parse(localStorage.getItem("process")) || [];
 let finished = JSON.parse(localStorage.getItem("finished")) || [];
 
-let flag = 0;
-
 // Functions
-// Buttons from pending column
-const taskProcess = (e) => {
-  const id = e.target.getAttribute("data-index");
+const addTaskToProcessColumn = (e, identifier, key, fn) => {
+  const id = e.getAttribute("data-index");
 
-  process.push(tasks[id]);
-  tasks.splice(id, 1);
-
-  // Save task on localStorage
-  localStorage.setItem("process", JSON.stringify(process));
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  // Re-generate html
-  generateHtml();
-  generateHtmlProcess();
-};
-
-const taskFinished = (e) => {
-  const id = e.target.getAttribute("data-index");
-
-  finished.push(tasks[id]);
-  tasks.splice(id, 1);
-
-  // Save task on localStorage
-  localStorage.setItem("finished", JSON.stringify(finished));
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  // Re-generate html
-  generateHtml();
-  generateHtmlFinished();
-};
-
-// Buttons from process column
-const addToPendingTasks = (e) => {
-  const id = e.target.getAttribute("data-index");
-
-  tasks.push(process[id]);
-  process.splice(id, 1);
+  process.push(identifier[id]);
+  identifier.splice(id, 1);
 
   // Save task on localStorage
   localStorage.setItem("process", JSON.stringify(process));
+  localStorage.setItem(key, JSON.stringify(identifier));
+
+  // Re-execute de html
+  generateHtmlProcess();
+  fn();
+};
+
+const addTaskToFinishedColumn = (e, identifier, key, fn) => {
+  const id = e.getAttribute("data-index");
+
+  finished.push(identifier[id]);
+  identifier.splice(id, 1);
+
+  // Save task on localStorage
+  localStorage.setItem("finished", JSON.stringify(finished));
+  localStorage.setItem(key, JSON.stringify(identifier));
+
+  // Re-generate html
+  generateHtmlFinished();
+  fn();
+};
+
+const addTaskToPendingColumn = (e, identifier, key, fn) => {
+  const id = e.getAttribute("data-index");
+
+  tasks.push(identifier[id]);
+  identifier.splice(id, 1);
+
+  // Save task on localStorage
   localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem(key, JSON.stringify(identifier));
 
   // Re-generate html
   generateHtml();
-  generateHtmlProcess();
-};
-const addToFinishedTasks = (e) => {
-  console.log(e);
-  const id = e.target.getAttribute("data-index");
-
-  finished.push(process[id]);
-  process.splice(id, 1);
-
-  // Save task on localStorage
-  localStorage.setItem("process", JSON.stringify(process));
-  localStorage.setItem("finished", JSON.stringify(finished));
-
-  // Re-generate html
-  generateHtmlProcess();
-  generateHtmlFinished();
+  fn();
 };
 
-// Buttons from finished column
-const addToPendingColumn = (e) => {
-  const id = e.target.getAttribute("data-index");
-  tasks.push(finished[id]);
-  finished.splice(id, 1);
+const eliminateTask = (e, identifier, key, fn) => {
+  const id = e.getAttribute("data-index");
 
-  // Save task on localStorage
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("finished", JSON.stringify(finished));
+  identifier.splice(id, 1);
 
-  // Re-generate html
-  generateHtml();
-  generateHtmlFinished();
+  localStorage.setItem(key, JSON.stringify(identifier));
+
+  fn();
 };
 
-const addToProcessColumn = (e) => {
-  const id = e.target.getAttribute("data-index");
-  process.push(finished[id]);
-  finished.splice(id, 1);
+// Generate html content
+const htmlContent = (container, identifier, classes, texts) => {
+  container.innerHTML = "";
 
-  // Save task on localSotrage
-  // Save task on localStorage
-  localStorage.setItem("process", JSON.stringify(process));
-  localStorage.setItem("finished", JSON.stringify(finished));
-
-  // Re-generate html
-  generateHtmlProcess();
-  generateHtmlFinished();
-};
-
-// Generate html on pending column
-const generateHtml = () => {
-  tasksContainer.innerHTML = "";
-
-  tasks.forEach((task, index) => {
+  identifier.forEach((task, index) => {
     newHtml = `
         <li draggable="true" class="tasks-pending__task">
             <div class="task-pending__content">
@@ -117,123 +78,147 @@ const generateHtml = () => {
                 </section>
                 <p class="tasks-pending__manage">
                 <button class="btn-eliminate">Editar</button>
-                <button class="btn-eliminate">Eliminar</button>
+                <button class="btn-eliminate ${classes[0]}" data-index="${index}">Eliminar</button>
                 </p>
             </div>
             <div>
-                <button class="btn btn-process" data-index="${index}">En proceso</button>
-                <button class="btn btn-finished" data-index="${index}">Terminada</button>
+                <button class="btn ${classes[1]}" data-index="${index}">${texts[0]}</button>
+                <button class="btn ${classes[2]}" data-index="${index}">${texts[1]}</button>
             </div>
         </li>
         `;
 
-    tasksContainer.insertAdjacentHTML("beforeend", newHtml);
+    container.insertAdjacentHTML("beforeend", newHtml);
   });
+};
+
+// Generate html on pending column
+const generateHtml = () => {
+  htmlContent(
+    tasksContainer,
+    tasks,
+    ["btn-eliminate-pending", "btn-process", "btn-finished"],
+    ["En proceso", "Terminada"],
+  );
 
   const btnsProcess = document.querySelectorAll(".btn-process");
   const btnsFinished = document.querySelectorAll(".btn-finished");
+  const btnsElimintate = document.querySelectorAll(".btn-eliminate-pending");
 
   btnsProcess.forEach((btn) => {
-    btn.addEventListener("click", taskProcess.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToProcessColumn(e.target, tasks, "tasks", generateHtml);
+    });
   });
 
   btnsFinished.forEach((btn) => {
-    btn.addEventListener("click", taskFinished.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToFinishedColumn(e.target, tasks, "tasks", generateHtml);
+    });
+  });
+
+  btnsElimintate.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      eliminateTask(e.target, tasks, "tasks", generateHtml);
+    });
   });
 };
 generateHtml();
 
 // Generate html on process column
 const generateHtmlProcess = () => {
-  tasksProcessContainer.innerHTML = "";
-
-  process.forEach((task, index) => {
-    console.log(task);
-    newHtml = `
-        <li draggable="true" class="tasks-pending__task">
-            <div class="task-pending__content">
-                <section>
-                <h4 class="no-margin">${task.title}</h4>
-                <p>${task.description}</p>
-                </section>
-                <p class="tasks-pending__manage">
-                <button class="btn-eliminate">Editar</button>
-                <button class="btn-eliminate">Eliminar</button>
-                </p>
-            </div>
-            <div>
-                <button class="btn btn-pending" data-index="${index}">Pendiente</button>
-                <button class="btn btn-finished-process" data-index="${index}">Terminada</button>
-            </div>
-        </li>
-        `;
-
-    tasksProcessContainer.insertAdjacentHTML("beforeend", newHtml);
-  });
+  htmlContent(
+    tasksProcessContainer,
+    process,
+    ["btn-eliminate-process", "btn-pending", "btn-finished-process"],
+    ["Pendiente", "Terminada"],
+  );
 
   const btnsPending = document.querySelectorAll(".btn-pending");
   const btnsFinished = document.querySelectorAll(".btn-finished-process");
+  const btnsElimintate = document.querySelectorAll(".btn-eliminate-process");
 
   btnsPending.forEach((btn) => {
-    btn.addEventListener("click", addToPendingTasks.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToPendingColumn(e.target, process, "process", generateHtmlProcess);
+    });
   });
 
   btnsFinished.forEach((btn) => {
-    btn.addEventListener("click", addToFinishedTasks.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToFinishedColumn(
+        e.target,
+        process,
+        "process",
+        generateHtmlProcess,
+      );
+    });
+  });
+
+  btnsElimintate.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      eliminateTask(e.target, process, "process", generateHtmlProcess);
+    });
   });
 };
-
 generateHtmlProcess();
 
 // Generate html on finished column
 const generateHtmlFinished = () => {
-  tasksFinishedContainer.innerHTML = "";
-
-  finished.forEach((task, index) => {
-    newHtml = `
-        <li draggable="true" class="tasks-pending__task">
-            <div class="task-pending__content">
-                <section>
-                <h4 class="no-margin">${task.title}</h4>
-                <p>${task.description}</p>
-                </section>
-                <p class="tasks-pending__manage">
-                <button class="btn-eliminate">Editar</button>
-                <button class="btn-eliminate">Eliminar</button>
-                </p>
-            </div>
-            <div>
-                <button class="btn btn-pending-finished" data-index="${index}">Pendiente</button>
-                <button class="btn btn-process-finished" data-index="${index}">En proceso</button>
-            </div>
-        </li>
-        `;
-
-    tasksFinishedContainer.insertAdjacentHTML("beforeend", newHtml);
-  });
+  htmlContent(
+    tasksFinishedContainer,
+    finished,
+    ["btn-eliminate-finished", "btn-pending-finished", "btn-process-finished"],
+    ["Pendiente", "En proceso"],
+  );
 
   const btnsPending = document.querySelectorAll(".btn-pending-finished");
   const btnsProcess = document.querySelectorAll(".btn-process-finished");
+  const btnsElimintate = document.querySelectorAll(".btn-eliminate-finished");
 
   btnsPending.forEach((btn) => {
-    btn.addEventListener("click", addToPendingColumn.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToPendingColumn(
+        e.target,
+        finished,
+        "finished",
+        generateHtmlFinished,
+      );
+    });
   });
+
   btnsProcess.forEach((btn) => {
-    btn.addEventListener("click", addToProcessColumn.bind(this));
+    btn.addEventListener("click", (e) => {
+      addTaskToProcessColumn(
+        e.target,
+        finished,
+        "finished",
+        generateHtmlFinished,
+      );
+    });
+  });
+
+  btnsElimintate.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      eliminateTask(e.target, finished, "finished", generateHtmlFinished);
+    });
   });
 };
 generateHtmlFinished();
 
 addTask.addEventListener("click", () => {
   // Get inputs values
-  const taskTitle = document.getElementById("task-title").value;
-  const taskDescription = document.getElementById("task-description").value;
+  let taskTitle = document.getElementById("task-title").value;
+  let taskDescription = document.getElementById("task-description").value;
 
   // Add task to tasks array
   tasks.push({ title: taskTitle, description: taskDescription });
 
   // Save task on localStorage
   localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  taskTitle = "";
+  taskDescription = "";
 
   // Generate html
   generateHtml();
