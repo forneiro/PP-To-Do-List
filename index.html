@@ -8,11 +8,11 @@
   </head>
   <body>
     <main class="container">
-      <section class="tasks-pending">
+      <section class="tasks-pending container__column">
         <h2>Pendiente</h2>
 
         <p class="tasks-pending__field">
-          <label for="">Title</label>
+          <label for="">Título</label>
           <input
             class="tasks-pending__input"
             type="text"
@@ -21,7 +21,7 @@
           />
         </p>
         <p class="tasks-pending__field">
-          <label for="">Description (optional)</label>
+          <label for="">Descripción (opcional)</label>
           <textarea
             class="tasks-pending__input"
             rows="1"
@@ -35,13 +35,13 @@
         <ul class="column" id="tasks-pending__tasks"></ul>
       </section>
 
-      <section class="tasks-process">
+      <section class="tasks-process container__column">
         <h2>En proceso</h2>
         <h3>Tareas</h3>
         <ul class="column" id="tasks-process__tasks"></ul>
       </section>
 
-      <section class="tasks-finished">
+      <section class="tasks-finished container__column">
         <h2>Terminada</h2>
         <h3>Tareas</h3>
         <ul class="column" id="tasks-finished__tasks"></ul>

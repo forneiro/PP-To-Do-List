@@ -75,13 +75,13 @@ const htmlContent = (container, identifier, classes, texts) => {
     newHtml = `
         <li draggable="true" class="tasks-pending__task">
             <div class="task-pending__content">
-                <section>
-                <h4 class="no-margin">${task.title}</h4>
-                <p>${task.description}</p>
+                <section class="task-pending__header">
+                  <h4 class="no-margin">${task.title}</h4>
+                  <p>${task.description}</p>
                 </section>
                 <p class="tasks-pending__manage">
-                <button class="btn-eliminate">Editar</button>
-                <button class="btn-eliminate ${classes[0]}" data-index="${index}">Eliminar</button>
+                  <button class="btn-eliminate">Editar</button>
+                  <button class="btn-eliminate ${classes[0]}" data-index="${index}">Eliminar</button>
                 </p>
             </div>
             <div>

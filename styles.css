@@ -23,7 +23,7 @@ body {
 
   font-size: 1.6rem;
 
-  background-color: rgb(158, 150, 139);
+  background-color: rgb(0, 0, 0);
   color: aliceblue;
 }
 
@@ -39,7 +39,7 @@ textarea {
 /* Utilities */
 .container {
   max-width: 120rem;
-  margin: 0 auto;
+  margin: 10rem auto 0;
 
   display: flex;
   justify-content: space-between;
@@ -50,8 +50,9 @@ textarea {
   padding: 1rem 3rem;
 }
 
-.container section {
+.container .container__column {
   flex-grow: 1;
+  flex-basis: 33.3%;
 }
 
 .column {
@@ -124,6 +125,12 @@ textarea {
 
 .task-pending__content {
   display: flex;
+  justify-content: space-between;
+  column-gap: 2rem;
+}
+
+.task-pending__header {
+  overflow: hidden;
 }
 
 .tasks-pending__manage {
