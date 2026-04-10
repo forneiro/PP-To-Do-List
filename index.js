@@ -181,6 +181,8 @@ generateHtmlProcess();
 generateHtmlFinished();
 
 ////////////////////////////////////////////////////////////////
+let taskTitleContent = document.getElementById("task-title");
+let taskDescriptionContent = document.getElementById("task-description");
 addTask.addEventListener("click", () => {
   // Get inputs values
   let taskTitle = document.getElementById("task-title").value;
@@ -194,8 +196,8 @@ addTask.addEventListener("click", () => {
   // Save task on localStorage
   localStorage.setItem("tasks", JSON.stringify(tasks));
 
-  taskTitle = "";
-  taskDescription = "";
+  taskTitleContent.value = "";
+  taskDescriptionContent.value = "";
 
   // Generate html
   generateHtml();
