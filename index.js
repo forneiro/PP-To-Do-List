@@ -73,7 +73,7 @@ const htmlContent = (container, identifier, classes, texts) => {
 
   identifier.forEach((task, index) => {
     newHtml = `
-        <li draggable="true" class="tasks-pending__task">
+        <li class="tasks-pending__task">
             <div class="task-pending__content">
                 <section class="task-pending__header">
                   <h4 class="no-margin">${task.title}</h4>
