@@ -20,5 +20,3 @@ Para lograrlo, planifiqué la arquitectura del código separando el código en d
   1. Clona el repositorio
   2. Abre el archivo index.html en tu navegador.
 
-## Mejoras futuras
-  - Añadir la opción de editar tareas existentes.
