@@ -1,4 +1,6 @@
 const addTask = document.getElementById("add-task");
+const editAccept = document.getElementById("edit-accept");
+const editCancel = document.getElementById("edit-cancel");
 const tasksContainer = document.getElementById("tasks-pending__tasks");
 const tasksProcessContainer = document.getElementById("tasks-process__tasks");
 const tasksFinishedContainer = document.getElementById("tasks-finished__tasks");
@@ -8,6 +10,13 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let process = JSON.parse(localStorage.getItem("process")) || [];
 let finished = JSON.parse(localStorage.getItem("finished")) || [];
 
+// Fields
+let taskTitleContent = document.getElementById("task-title");
+let taskDescriptionContent = document.getElementById("task-description");
+
+let elEditing;
+let colEditing;
+let keyEditing;
 ////////////////////////////////////////////////////////////////
 // Functions
 // Add task to their respective column
@@ -67,6 +76,51 @@ const eliminateTask = (e, identifier, key, fn) => {
   fn();
 };
 
+const toggleHidden = () => {
+  addTask.classList.toggle("hidden");
+  editAccept.classList.toggle("hidden");
+  editCancel.classList.toggle("hidden");
+};
+// Edit task
+const editTask = (e, identifier, key, fn) => {
+  const id = e.getAttribute("data-index");
+
+  taskTitleContent.value = identifier[id].title;
+  taskDescriptionContent.value = identifier[id].description;
+
+  taskTitleContent.focus();
+
+  toggleHidden();
+
+  elEditing = identifier.findIndex(
+    (task) => task.title === taskTitleContent.value,
+  );
+  colEditing = [...identifier];
+  keyEditing = key;
+};
+
+editAccept.addEventListener("click", () => {
+  const newTitle = taskTitleContent.value;
+  const newDescription = taskDescriptionContent.value;
+
+  colEditing[elEditing].title = newTitle;
+  colEditing[elEditing].description = newDescription;
+
+  localStorage.setItem(keyEditing, JSON.stringify(colEditing));
+
+  if (keyEditing === "tasks") generateHtml();
+  if (keyEditing === "process") generateHtmlProcess();
+  if (keyEditing === "finished") generateHtmlFinished();
+
+  elEditing = undefined;
+  colEditing = undefined;
+  keyEditing = undefined;
+
+  toggleHidden();
+
+  taskTitleContent.value = taskDescriptionContent.value = "";
+});
+
 // Generate html content
 const htmlContent = (container, identifier, classes, texts) => {
   container.innerHTML = "";
@@ -80,13 +134,13 @@ const htmlContent = (container, identifier, classes, texts) => {
                   <p>${task.description}</p>
                 </section>
                 <p class="tasks-pending__manage">
-                  <button class="btn-eliminate">Editar</button>
-                  <button class="btn-eliminate ${classes[0]}" data-index="${index}">Eliminar</button>
+                  <button class="btn-eliminate ${classes[0]}" data-index="${index}">Editar</button>
+                  <button class="btn-eliminate ${classes[1]}" data-index="${index}">Eliminar</button>
                 </p>
             </div>
             <div>
-                <button class="btn ${classes[1]}" data-index="${index}">${texts[0]}</button>
-                <button class="btn ${classes[2]}" data-index="${index}">${texts[1]}</button>
+                <button class="btn ${classes[2]}" data-index="${index}">${texts[0]}</button>
+                <button class="btn ${classes[3]}" data-index="${index}">${texts[1]}</button>
             </div>
         </li>
         `;
@@ -125,17 +179,24 @@ const generateHtml = () => {
   htmlContent(
     tasksContainer,
     tasks,
-    ["btn-eliminate-pending", "btn-process", "btn-finished"],
+    [
+      "btn-edit-pending",
+      "btn-eliminate-pending",
+      "btn-process",
+      "btn-finished",
+    ],
     ["En proceso", "Terminada"],
   );
 
   const btnsProcess = document.querySelectorAll(".btn-process");
   const btnsFinished = document.querySelectorAll(".btn-finished");
-  const btnsElimintate = document.querySelectorAll(".btn-eliminate-pending");
+  const btnsEliminate = document.querySelectorAll(".btn-eliminate-pending");
+  const btnsEdit = document.querySelectorAll(".btn-edit-pending");
 
   btnEventsPending(btnsProcess, addTaskToProcessColumn);
   btnEventsPending(btnsFinished, addTaskToFinishedColumn);
-  btnEventsPending(btnsElimintate, eliminateTask);
+  btnEventsPending(btnsEliminate, eliminateTask);
+  btnEventsPending(btnsEdit, editTask);
 };
 
 // Generate html on process column
@@ -143,17 +204,24 @@ const generateHtmlProcess = () => {
   htmlContent(
     tasksProcessContainer,
     process,
-    ["btn-eliminate-process", "btn-pending", "btn-finished-process"],
+    [
+      "btn-edit-process",
+      "btn-eliminate-process",
+      "btn-pending",
+      "btn-finished-process",
+    ],
     ["Pendiente", "Terminada"],
   );
 
   const btnsPending = document.querySelectorAll(".btn-pending");
   const btnsFinished = document.querySelectorAll(".btn-finished-process");
-  const btnsElimintate = document.querySelectorAll(".btn-eliminate-process");
+  const btnsEliminate = document.querySelectorAll(".btn-eliminate-process");
+  const btnsEdit = document.querySelectorAll(".btn-edit-process");
 
   btnEventsProcess(btnsPending, addTaskToPendingColumn);
   btnEventsProcess(btnsFinished, addTaskToFinishedColumn);
-  btnEventsProcess(btnsElimintate, eliminateTask);
+  btnEventsProcess(btnsEliminate, eliminateTask);
+  btnEventsProcess(btnsEdit, editTask);
 };
 
 // Generate html on finished column
@@ -161,17 +229,24 @@ const generateHtmlFinished = () => {
   htmlContent(
     tasksFinishedContainer,
     finished,
-    ["btn-eliminate-finished", "btn-pending-finished", "btn-process-finished"],
+    [
+      "btn-edit-finished",
+      "btn-eliminate-finished",
+      "btn-pending-finished",
+      "btn-process-finished",
+    ],
     ["Pendiente", "En proceso"],
   );
 
   const btnsPending = document.querySelectorAll(".btn-pending-finished");
   const btnsProcess = document.querySelectorAll(".btn-process-finished");
-  const btnsElimintate = document.querySelectorAll(".btn-eliminate-finished");
+  const btnsEliminate = document.querySelectorAll(".btn-eliminate-finished");
+  const btnsEdit = document.querySelectorAll(".btn-edit-finished");
 
   btnEventsFinished(btnsPending, addTaskToPendingColumn);
   btnEventsFinished(btnsProcess, addTaskToProcessColumn);
-  btnEventsFinished(btnsElimintate, eliminateTask);
+  btnEventsFinished(btnsEliminate, eliminateTask);
+  btnEventsFinished(btnsEdit, editTask);
 };
 
 ////////////////////////////////////////////////////////////////
@@ -181,8 +256,6 @@ generateHtmlProcess();
 generateHtmlFinished();
 
 ////////////////////////////////////////////////////////////////
-let taskTitleContent = document.getElementById("task-title");
-let taskDescriptionContent = document.getElementById("task-description");
 addTask.addEventListener("click", () => {
   // Get inputs values
   let taskTitle = document.getElementById("task-title").value;
@@ -196,8 +269,7 @@ addTask.addEventListener("click", () => {
   // Save task on localStorage
   localStorage.setItem("tasks", JSON.stringify(tasks));
 
-  taskTitleContent.value = "";
-  taskDescriptionContent.value = "";
+  taskTitleContent.value = taskDescriptionContent.value = "";
 
   // Generate html
   generateHtml();

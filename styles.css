@@ -88,6 +88,10 @@ textarea {
 .no-margin {
   margin: 0;
 }
+
+.hidden {
+  display: none;
+}
 /* Tasks pending */
 .tasks-pending__field {
   display: flex;
