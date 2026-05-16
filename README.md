@@ -4,7 +4,7 @@ Aplicación web interactiva diseñada para la gestión de tareas de forma local.
 ## Tecnologías Utilizadas
   - **HTML5:** Estructura semántica para la accesibilidad.
   - **CSS:** Diseño responsive mediante Media Queries y maquetación con Flexbox.
-  - **JavaScript (ES6++):**
+  - **JavaScript (ES6+):**
   -   - LocalStorage: Para la persistencia de datos del lado del cliente sin base de datos externa.
       - Manipulación del DOM: Renderizado dinámico de tareas y manejo de eventos.
 
