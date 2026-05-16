@@ -13,7 +13,7 @@ Uno de los mayores retos fue agregar los eventos para poder cambiar las tareas d
 Para lograrlo, planifiqué la arquitectura del código separando el código en diferentes funciones.
 
 ## Funcionalidades Clave
-  - **CRUD Local:** Los usuarios pueden agregar y eliminar tareas, los datos se mantienen incluso al refrescar la página gracias a localStorage.
+  - **CRUD Local:** Los usuarios pueden agregar, editar y eliminar tareas, los datos se mantienen incluso al refrescar la página gracias a localStorage.
   - **Diseño Responsive:** La interfaz se adapta automáticamente a dispositivos móviles y escritorio (breakpoint de 968px).
 
 ## Cómo ejecutar el proyecto
